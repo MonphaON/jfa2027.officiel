@@ -504,79 +504,203 @@ cookieRefuse.addEventListener(
 }
 
 /* =====================================================
-COMPTEUR DE VOTE
+COMPTEUR DE VOTE JFA
+===================================================== */
+
+const voteButton = document.getElementById("voteButton");
+const voteButtonNav = document.getElementById("voteButtonNav");
+const voteMessage = document.getElementById("voteMessage");
+const voteCount = document.getElementById("voteCount");
+
+
+/* =====================================================
+CONFIGURATION
 ===================================================== */
 
 /*
-IMPORTANT :
-
-
-Cette partie est volontairement simple.
-Elle utilise le compteur déjà présent
-sur ton site.
-
-Si tu veux que le compteur soit réellement
-commun à tous les visiteurs, il faudra ensuite
-le connecter à une table Supabase dédiée.
-
-
+    Nombre de votes affiché au départ.
+    
+    Change 100 par le nombre que tu veux.
 */
 
-const voteButton =
-document.getElementById("voteButton");
+const VOTES_DE_DEPART = 100;
 
-const voteButtonNav =
-document.getElementById("voteButtonNav");
 
-const voteMessage =
-document.getElementById("voteMessage");
+/*
+    Date de départ du compteur.
+
+    À partir de cette date :
+    +2 votes par jour.
+
+    Format :
+    "AAAA-MM-JJ"
+*/
+
+const DATE_DE_DEPART = "2026-08-06";
+
+
+/* =====================================================
+CALCUL DU NOMBRE DE JOURS
+===================================================== */
+
+function getDaysSinceStart() {
+
+    const startDate =
+        new Date(DATE_DE_DEPART + "T00:00:00");
+
+    const today =
+        new Date();
+
+    /*
+        On remet l'heure à minuit
+        pour ne compter que les jours.
+    */
+
+    today.setHours(0, 0, 0, 0);
+
+    const difference =
+        today.getTime() - startDate.getTime();
+
+    const days =
+        Math.floor(
+            difference / (1000 * 60 * 60 * 24)
+        );
+
+    return Math.max(0, days);
+
+}
+
+
+/* =====================================================
+COMPTEUR DE BASE
+===================================================== */
+
+function getBaseVoteCount() {
+
+    const days =
+        getDaysSinceStart();
+
+    /*
+        +2 votes automatiquement
+        chaque jour.
+    */
+
+    return VOTES_DE_DEPART + (days * 2);
+
+}
+
+
+/* =====================================================
+COMPTEUR PERSONNEL DE LA PAGE
+===================================================== */
+
+let personalVotes = 0;
+
+
+/* =====================================================
+AFFICHER LE COMPTEUR
+===================================================== */
+
+function updateVoteCount() {
+
+    const baseVotes =
+        getBaseVoteCount();
+
+    const totalVotes =
+        baseVotes + personalVotes;
+
+
+    if (voteCount) {
+
+        voteCount.textContent =
+            totalVotes;
+
+    }
+
+}
+
+
+/* =====================================================
+CLIC SUR VOTE JFA
+===================================================== */
 
 function handleVoteClick() {
 
+    /*
+        Le vote est uniquement ajouté
+        sur l'écran de cette personne.
+    */
 
-if (voteMessage) {
+    personalVotes++;
 
-    voteMessage.textContent =
-        "Merci pour ton soutien à JFA ❤️";
+    updateVoteCount();
+
+
+    if (voteMessage) {
+
+        voteMessage.textContent =
+            "Merci pour ton soutien à JFA ❤️";
+
+    }
 
 }
 
 
-}
+/* =====================================================
+BOUTON VOTE
+===================================================== */
 
 if (voteButton) {
 
-
-voteButton.addEventListener(
-    "click",
-    handleVoteClick
-);
-
+    voteButton.addEventListener(
+        "click",
+        handleVoteClick
+    );
 
 }
+
+
+/* =====================================================
+BOUTON DU MENU
+===================================================== */
 
 if (voteButtonNav) {
 
+    voteButtonNav.addEventListener(
+        "click",
+        () => {
 
-voteButtonNav.addEventListener(
-    "click",
-    () => {
+            const voteSection =
+                document.querySelector(".vote-section");
 
-        const voteSection =
-            document.querySelector(
-                ".vote-section"
-            );
+            if (voteSection) {
 
-        if (voteSection) {
+                voteSection.scrollIntoView({
+                    behavior: "smooth"
+                });
 
-            voteSection.scrollIntoView({
-                behavior: "smooth"
-            });
+            }
 
         }
-
-    }
-);
-
+    );
 
 }
+
+
+/* =====================================================
+INITIALISATION
+===================================================== */
+
+updateVoteCount();
+
+
+/*
+    Vérifie le compteur régulièrement.
+    Si minuit passe pendant que quelqu'un
+    a le site ouvert, les +2 apparaîtront.
+*/
+
+setInterval(
+    updateVoteCount,
+    60 * 1000
+);
