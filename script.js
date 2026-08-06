@@ -503,7 +503,7 @@ cookieRefuse.addEventListener(
 
 }
 
-```js
+js
 /* =====================================================
 COMPTEUR DE VOTE JFA
 ===================================================== */
@@ -675,4 +675,3 @@ setInterval(
     updateVoteCount,
     60 * 1000
 );
-```
