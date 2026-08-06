@@ -508,138 +508,122 @@ js
 COMPTEUR DE VOTE JFA
 ===================================================== */
 
-const voteButton = document.getElementById("voteButton");
-const voteButtonNav = document.getElementById("voteButtonNav");
-const voteMessage = document.getElementById("voteMessage");
-const voteCount = document.getElementById("voteCount");
+document.addEventListener("DOMContentLoaded", function () {
+
+    const voteButton = document.getElementById("voteButton");
+    const voteButtonNav = document.getElementById("voteButtonNav");
+    const voteMessage = document.getElementById("voteMessage");
+    const voteCount = document.getElementById("voteCount");
 
 
-/* =====================================================
-CONFIGURATION
-===================================================== */
+    /* =====================================================
+    CONFIGURATION
+    ===================================================== */
 
-const VOTES_DE_DEPART = 100;
-const DATE_DE_DEPART = "2026-08-06";
-
-
-/* =====================================================
-VOTES PERSONNELS
-===================================================== */
-
-/*
-    Ces votes ne sont PAS enregistrés.
-
-    Ils existent uniquement tant que la page
-    reste ouverte.
-*/
-
-let personalVotes = 0;
+    const VOTES_DE_DEPART = 100;
+    const DATE_DE_DEPART = "2026-08-06";
 
 
-/* =====================================================
-CALCUL DES +2 PAR JOUR
-===================================================== */
+    /* =====================================================
+    VOTES LOCAUX
+    ===================================================== */
 
-function getBaseVoteCount() {
-
-    const startDate =
-        new Date(DATE_DE_DEPART + "T00:00:00");
-
-    const today =
-        new Date();
-
-    startDate.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-
-    const difference =
-        today.getTime() - startDate.getTime();
-
-    const days =
-        Math.floor(
-            difference / (1000 * 60 * 60 * 24)
-        );
-
-    return VOTES_DE_DEPART + Math.max(0, days) * 2;
-}
+    let personalVotes = 0;
 
 
-/* =====================================================
-MISE À JOUR DU COMPTEUR
-===================================================== */
+    /* =====================================================
+    CALCUL DES +2 PAR JOUR
+    ===================================================== */
 
-function updateVoteCount() {
+    function getBaseVoteCount() {
 
-    if (!voteCount) {
+        const startDate =
+            new Date(DATE_DE_DEPART + "T00:00:00");
 
-        console.error(
-            "L'élément #voteCount est introuvable."
-        );
+        const today =
+            new Date();
 
-        return;
+        startDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+
+        const difference =
+            today.getTime() - startDate.getTime();
+
+        const days =
+            Math.floor(
+                difference / 86400000
+            );
+
+        return VOTES_DE_DEPART + (Math.max(0, days) * 2);
     }
 
-    const baseVotes =
-        getBaseVoteCount();
 
-    const totalVotes =
-        baseVotes + personalVotes;
+    /* =====================================================
+    AFFICHER LE COMPTEUR
+    ===================================================== */
 
-    voteCount.textContent =
-        totalVotes;
-}
+    function updateVoteCount() {
 
+        const baseVotes =
+            getBaseVoteCount();
 
-/* =====================================================
-CLIC SUR LE BOUTON VOTE
-===================================================== */
+        const totalVotes =
+            baseVotes + personalVotes;
 
-function handleVoteClick(event) {
+        if (voteCount) {
 
-    event.preventDefault();
+            voteCount.textContent = totalVotes;
 
-    personalVotes++;
+        } else {
 
-    updateVoteCount();
+            console.error("❌ #voteCount introuvable");
 
-    if (voteMessage) {
-
-        voteMessage.textContent =
-            "Merci pour ton soutien à JFA ❤️";
+        }
 
     }
 
-}
+
+    /* =====================================================
+    BOUTON VOTE
+    ===================================================== */
+
+    if (voteButton) {
+
+        voteButton.addEventListener("click", function (event) {
+
+            event.preventDefault();
+
+            personalVotes++;
+
+            updateVoteCount();
+
+            if (voteMessage) {
+
+                voteMessage.textContent =
+                    "Merci pour ton soutien à JFA ❤️";
+
+            }
+
+        });
+
+        console.log("✅ Bouton VOTE JFA détecté");
+
+    } else {
+
+        console.error("❌ #voteButton introuvable");
+
+    }
 
 
-/* =====================================================
-BOUTON VOTE PRINCIPAL
-===================================================== */
+    /* =====================================================
+    BOUTON VOTE DU MENU
+    ===================================================== */
 
-if (voteButton) {
+    if (voteButtonNav) {
 
-    voteButton.addEventListener(
-        "click",
-        handleVoteClick
-    );
+        voteButtonNav.addEventListener("click", function (event) {
 
-} else {
-
-    console.error(
-        "Le bouton #voteButton est introuvable."
-    );
-
-}
-
-
-/* =====================================================
-BOUTON VOTE DU MENU
-===================================================== */
-
-if (voteButtonNav) {
-
-    voteButtonNav.addEventListener(
-        "click",
-        function () {
+            event.preventDefault();
 
             const voteSection =
                 document.querySelector(".vote-section");
@@ -652,26 +636,26 @@ if (voteButtonNav) {
 
             }
 
-        }
-    );
+        });
 
-}
-
-
-/* =====================================================
-DÉMARRAGE
-===================================================== */
-
-updateVoteCount();
+    }
 
 
-/*
-    Vérification toutes les minutes.
-    Cela permet de détecter le changement de jour
-    même si la page reste ouverte.
-*/
+    /* =====================================================
+    AFFICHAGE INITIAL
+    ===================================================== */
 
-setInterval(
-    updateVoteCount,
-    60 * 1000
-);
+    updateVoteCount();
+
+
+    /* =====================================================
+    ACTUALISATION CHAQUE MINUTE
+    ===================================================== */
+
+    setInterval(function () {
+
+        updateVoteCount();
+
+    }, 60000);
+
+});
