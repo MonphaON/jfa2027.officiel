@@ -1,367 +1,160 @@
-/* =========================================
-   JFA — FORCE & ACTION
-   COMPTEUR DE VOTES
-========================================= */
+document.addEventListener("DOMContentLoaded", () => {
 
+    const voteButton = document.getElementById("voteButton");
+    const voteButtonNav = document.getElementById("voteButtonNav");
+    const voteCount = document.getElementById("voteCount");
+    const voteMessage = document.getElementById("voteMessage");
 
-/*
-    ==================================================
-    IMPORTANT
-    ==================================================
+    // ==============================
+    // COMPTEUR JFA
+    // ==============================
 
-    Tu dois remplacer ces deux valeurs par celles
-    de ton projet Supabase.
+    const STORAGE_COUNT = "jfa_vote_count";
+    const STORAGE_DATE = "jfa_last_date";
 
-    Exemple :
+    // Date actuelle
+    const today = new Date();
+    const todayString = today.toISOString().split("T")[0];
 
-    const SUPABASE_URL =
-    "https://abcdefgh.supabase.co";
+    // Récupération du compteur
+    let count = parseInt(localStorage.getItem(STORAGE_COUNT)) || 0;
 
-    const SUPABASE_KEY =
-    "eyJhbGciOiJIUzI1NiIs...";
-*/
+    // Dernière date où le compteur a été ouvert
+    const lastDate = localStorage.getItem(STORAGE_DATE);
 
+    // ==============================
+    // +2 PAR JOUR
+    // ==============================
 
-const SUPABASE_URL = "TON_URL_SUPABASE";
+    if (lastDate) {
 
-const SUPABASE_KEY = "TA_CLE_ANON_SUPABASE";
+        const last = new Date(lastDate);
+        const current = new Date(todayString);
 
+        // Nombre de jours passés depuis la dernière visite
+        const difference =
+            Math.floor((current - last) / (1000 * 60 * 60 * 24));
 
+        if (difference > 0) {
 
-/* =========================================
-   ELEMENTS HTML
-========================================= */
-
-const voteCount = document.getElementById("voteCount");
-
-const voteButton = document.getElementById("voteButton");
-
-const voteButtonNav = document.getElementById("voteButtonNav");
-
-const voteMessage = document.getElementById("voteMessage");
-
-const mobileMenu = document.getElementById("mobileMenu");
-
-const mobileNavigation = document.getElementById("mobileNavigation");
-
-
-
-/* =========================================
-   VERIFICATION CONFIGURATION
-========================================= */
-
-function supabaseReady() {
-
-    return (
-
-        SUPABASE_URL !== "TON_URL_SUPABASE"
-
-        &&
-
-        SUPABASE_KEY !== "TA_CLE_ANON_SUPABASE"
-
-    );
-
-}
-
-
-
-/* =========================================
-   RECUPERER LE NOMBRE DE VOTES
-========================================= */
-
-async function getVotes() {
-
-
-    if (!supabaseReady()) {
-
-        voteCount.textContent = "0";
-
-        console.warn(
-            "Supabase n'est pas encore configuré."
-        );
-
-        return;
-
-    }
-
-
-    try {
-
-
-        const response = await fetch(
-
-            `${SUPABASE_URL}/rest/v1/votes?select=id`,
-
-            {
-
-                method: "GET",
-
-                headers: {
-
-                    "apikey": SUPABASE_KEY,
-
-                    "Authorization":
-                        `Bearer ${SUPABASE_KEY}`
-
-                }
-
-            }
-
-        );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Erreur lors de la récupération des votes."
-            );
+            // +2 par jour passé
+            count += difference * 2;
 
         }
 
+    }
 
-        const data = await response.json();
+    // Sauvegarde
+    localStorage.setItem(STORAGE_COUNT, count);
+    localStorage.setItem(STORAGE_DATE, todayString);
+
+    // Affichage initial
+    voteCount.textContent = count;
 
 
-        voteCount.textContent =
-            data.length.toLocaleString("fr-FR");
+    // ==============================
+    // BOUTON VOTE JFA
+    // ==============================
 
+    function voteJFA() {
+
+        count++;
+
+        // Sauvegarde
+        localStorage.setItem(STORAGE_COUNT, count);
+
+        // Affichage
+        voteCount.textContent = count;
+
+        // Petit message
+        voteMessage.textContent = "Merci pour ton soutien à JFA !";
+
+        // Animation du compteur
+        voteCount.style.transform = "scale(1.2)";
+
+        setTimeout(() => {
+            voteCount.style.transform = "scale(1)";
+        }, 200);
 
     }
 
 
-    catch (error) {
-
-
-        console.error(error);
-
-
-        voteCount.textContent = "—";
-
-
+    // Gros bouton
+    if (voteButton) {
+        voteButton.addEventListener("click", voteJFA);
     }
 
-}
-
-
-
-/* =========================================
-   ENREGISTRER UN VOTE
-========================================= */
-
-async function registerVote() {
-
-
-    if (!supabaseReady()) {
-
-        voteMessage.textContent =
-            "Le compteur doit encore être configuré.";
-
-        return;
-
-    }
-
-
-    voteButton.disabled = true;
-
-
+    // Bouton VOTE JFA du menu
     if (voteButtonNav) {
+        voteButtonNav.addEventListener("click", voteJFA);
 
-        voteButtonNav.disabled = true;
-
+        // Amène automatiquement vers le compteur
+        voteButtonNav.addEventListener("click", () => {
+            document.querySelector(".vote-section").scrollIntoView({
+                behavior: "smooth"
+            });
+        });
     }
 
 
-    voteMessage.textContent =
-        "Enregistrement du vote...";
+    // ==============================
+    // MENU MOBILE
+    // ==============================
 
+    const mobileMenu = document.getElementById("mobileMenu");
+    const mobileNavigation = document.getElementById("mobileNavigation");
 
-    try {
+    if (mobileMenu && mobileNavigation) {
 
-
-        const response = await fetch(
-
-            `${SUPABASE_URL}/rest/v1/votes`,
-
-            {
-
-                method: "POST",
-
-                headers: {
-
-                    "apikey": SUPABASE_KEY,
-
-                    "Authorization":
-                        `Bearer ${SUPABASE_KEY}`,
-
-                    "Content-Type":
-                        "application/json",
-
-                    "Prefer":
-                        "return=minimal"
-
-                },
-
-                body: JSON.stringify({})
-
-            }
-
-        );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Le vote n'a pas pu être enregistré."
-            );
-
-        }
-
-
-        await getVotes();
-
-
-        voteMessage.textContent =
-            "Merci pour ton soutien à JFA !";
-
+        mobileMenu.addEventListener("click", () => {
+            mobileNavigation.classList.toggle("active");
+        });
 
     }
 
+});
 
-    catch (error) {
+// ==============================
+// COOKIE BANNER
+// ==============================
 
+const cookieBanner = document.getElementById("cookieBanner");
+const cookieAccept = document.getElementById("cookieAccept");
+const cookieRefuse = document.getElementById("cookieRefuse");
 
-        console.error(error);
+const cookieChoice = localStorage.getItem("jfa_cookie_choice");
 
+// Afficher la bannière si aucun choix n'a été fait
+if (!cookieChoice) {
 
-        voteMessage.textContent =
-            "Une erreur est survenue. Réessaie.";
-
-
-    }
-
-
-    voteButton.disabled = false;
-
-
-    if (voteButtonNav) {
-
-        voteButtonNav.disabled = false;
-
-    }
+    setTimeout(() => {
+        cookieBanner.classList.add("active");
+    }, 500);
 
 }
 
+// Accepter
+if (cookieAccept) {
 
+    cookieAccept.addEventListener("click", () => {
 
-/* =========================================
-   BOUTON VOTE PRINCIPAL
-========================================= */
+        localStorage.setItem("jfa_cookie_choice", "accepted");
 
-if (voteButton) {
+        cookieBanner.classList.remove("active");
 
-    voteButton.addEventListener(
-        "click",
-        registerVote
-    );
+    });
 
 }
 
+// Refuser
+if (cookieRefuse) {
 
+    cookieRefuse.addEventListener("click", () => {
 
-/* =========================================
-   BOUTON VOTE DU MENU
-========================================= */
+        localStorage.setItem("jfa_cookie_choice", "refused");
 
-if (voteButtonNav) {
+        cookieBanner.classList.remove("active");
 
-    voteButtonNav.addEventListener(
-
-        "click",
-
-        () => {
-
-            document
-                .getElementById("accueil")
-                .scrollIntoView({
-                    behavior: "smooth"
-                });
-
-            registerVote();
-
-        }
-
-    );
+    });
 
 }
-
-
-
-/* =========================================
-   MENU MOBILE
-========================================= */
-
-if (mobileMenu) {
-
-
-    mobileMenu.addEventListener(
-
-        "click",
-
-        () => {
-
-            mobileNavigation.classList.toggle(
-                "active"
-            );
-
-        }
-
-    );
-
-}
-
-
-
-/* =========================================
-   FERMER LE MENU MOBILE APRES UN CLIC
-========================================= */
-
-if (mobileNavigation) {
-
-
-    const mobileLinks =
-        mobileNavigation.querySelectorAll("a");
-
-
-    mobileLinks.forEach(
-
-        link => {
-
-
-            link.addEventListener(
-
-                "click",
-
-                () => {
-
-                    mobileNavigation
-                        .classList
-                        .remove("active");
-
-                }
-
-            );
-
-        }
-
-    );
-
-}
-
-
-
-/* =========================================
-   LANCEMENT
-========================================= */
-
-getVotes();
