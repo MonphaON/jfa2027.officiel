@@ -1,26 +1,123 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description"
-        content="JFA — Force & Action. Campagne pour l'élection des délégués de classe.">
+```
+<meta name="description"
+    content="JFA — Force & Action. Campagne pour l'élection des délégués de classe.">
 
-    <title>JFA — Force & Action</title>
+<title>JFA — Force & Action</title>
 
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="logocampagne.jpg" type="image/png">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="logocampagne.jpg" type="image/png">
 
-    <script src="script.js" defer></script>
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Ton JavaScript -->
+<script src="script.js" defer></script>
+```
+
 </head>
 
-```html
-<!-- ============================= -->
+<body>
+
+```
+<!-- ================================================= -->
+<!-- ÉCRAN DE CONNEXION -->
+<!-- ================================================= -->
+
+<div id="auth-screen">
+
+    <div class="auth-box">
+
+        <div class="auth-logo">
+            JFA
+        </div>
+
+        <h1>Bienvenue chez JFA</h1>
+
+        <p id="auth-description">
+            Crée ton compte pour accéder au site de campagne.
+        </p>
+
+
+        <!-- ÉTAPE 1 : EMAIL -->
+
+        <div id="email-step">
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Ton adresse e-mail"
+                autocomplete="email"
+            >
+
+            <button id="send-otp">
+                RECEVOIR LE CODE
+            </button>
+
+        </div>
+
+
+        <!-- ÉTAPE 2 : OTP -->
+
+        <div id="otp-step" style="display:none;">
+
+            <input
+                type="text"
+                id="otp"
+                placeholder="Code reçu par e-mail"
+                inputmode="numeric"
+                maxlength="6"
+                autocomplete="one-time-code"
+            >
+
+            <button id="verify-otp">
+                SE CONNECTER
+            </button>
+
+        </div>
+
+
+        <!-- ÉTAPE 3 : PROFIL -->
+
+        <div id="profile-step" style="display:none;">
+
+            <input
+                type="text"
+                id="first-name"
+                placeholder="Ton prénom"
+                autocomplete="given-name"
+            >
+
+            <input
+                type="text"
+                id="class-name"
+                placeholder="Ta classe (ex : 1STI2D)"
+            >
+
+            <button id="save-profile">
+                ACCÉDER AU SITE
+            </button>
+
+        </div>
+
+
+        <p id="auth-message"></p>
+
+    </div>
+
+</div>
+
+
+<!-- ================================================= -->
 <!-- COOKIE BANNER -->
-<!-- ============================= -->
+<!-- ================================================= -->
 
 <div class="cookie-banner" id="cookieBanner">
 
@@ -31,14 +128,20 @@
         </div>
 
         <div class="cookie-text">
-            <strong>Ce site utilise des cookies</strong>
+
+            <strong>
+                Ce site utilise des cookies
+            </strong>
+
             <p>
-                Nous utilisons des cookies et le stockage local pour
-                améliorer votre expérience sur le site JFA.
+                Nous utilisons des cookies et le stockage local
+                pour améliorer votre expérience sur le site JFA.
             </p>
+
         </div>
 
         <div class="cookie-buttons">
+
             <button id="cookieAccept" class="cookie-accept">
                 J'ACCEPTE
             </button>
@@ -46,19 +149,24 @@
             <button id="cookieRefuse" class="cookie-refuse">
                 REFUSER
             </button>
+
         </div>
 
     </div>
 
 </div>
-```
 
 
-<body>
+<!-- ================================================= -->
+<!-- CONTENU DU SITE -->
+<!-- ================================================= -->
 
-    <!-- ============================= -->
+<div id="site-content">
+
+
+    <!-- ================================================= -->
     <!-- NAVIGATION -->
-    <!-- ============================= -->
+    <!-- ================================================= -->
 
     <header class="header">
 
@@ -118,19 +226,19 @@
     </header>
 
 
-
-    <!-- ============================= -->
-    <!-- HERO -->
-    <!-- ============================= -->
+    <!-- ================================================= -->
+    <!-- CONTENU PRINCIPAL -->
+    <!-- ================================================= -->
 
     <main>
+
+
+        <!-- HERO -->
 
         <section class="hero" id="accueil">
 
             <div class="hero-background"></div>
-
             <div class="hero-lines"></div>
-
 
             <div class="hero-container">
 
@@ -138,26 +246,17 @@
                     ÉLECTIONS DES DÉLÉGUÉS
                 </div>
 
-
                 <h1>
-
                     UNE CLASSE.<br>
-
                     <span>UNE ÉQUIPE.</span><br>
-
                     UNE VOIX.
-
                 </h1>
 
-
                 <p class="hero-description">
-
                     Cette année, nous ne voulons pas simplement être
                     délégués. Nous voulons faire de notre classe une
                     véritable équipe.
-
                 </p>
-
 
                 <div class="hero-buttons">
 
@@ -165,13 +264,11 @@
                         DÉCOUVRIR NOTRE PROJET
                     </a>
 
-
                     <a href="#equipe" class="button button-outline">
                         NOTRE ÉQUIPE →
                     </a>
 
                 </div>
-
 
                 <div class="hero-bottom">
 
@@ -190,10 +287,7 @@
         </section>
 
 
-
-        <!-- ============================= -->
         <!-- VISION -->
-        <!-- ============================= -->
 
         <section class="vision section" id="vision">
 
@@ -214,7 +308,6 @@
                         </h2>
 
                     </div>
-
 
                     <div class="vision-text">
 
@@ -239,10 +332,7 @@
         </section>
 
 
-
-        <!-- ============================= -->
         <!-- PROJET -->
-        <!-- ============================= -->
 
         <section class="project section" id="projet">
 
@@ -257,15 +347,11 @@
                     Pas seulement des promesses.
                 </h2>
 
-
                 <div class="cards">
-
 
                     <article class="card">
 
-                        <div class="card-number">
-                            01
-                        </div>
+                        <div class="card-number">01</div>
 
                         <h3>
                             Une vraie représentation
@@ -279,12 +365,9 @@
                     </article>
 
 
-
                     <article class="card">
 
-                        <div class="card-number">
-                            02
-                        </div>
+                        <div class="card-number">02</div>
 
                         <h3>
                             Une classe soudée
@@ -298,12 +381,9 @@
                     </article>
 
 
-
                     <article class="card">
 
-                        <div class="card-number">
-                            03
-                        </div>
+                        <div class="card-number">03</div>
 
                         <h3>
                             Une communication claire
@@ -317,12 +397,9 @@
                     </article>
 
 
-
                     <article class="card">
 
-                        <div class="card-number">
-                            04
-                        </div>
+                        <div class="card-number">04</div>
 
                         <h3>
                             Des projets
@@ -336,12 +413,9 @@
                     </article>
 
 
-
                     <article class="card">
 
-                        <div class="card-number">
-                            05
-                        </div>
+                        <div class="card-number">05</div>
 
                         <h3>
                             Une écoute permanente
@@ -355,12 +429,9 @@
                     </article>
 
 
-
                     <article class="card card-red">
 
-                        <div class="card-number">
-                            06
-                        </div>
+                        <div class="card-number">06</div>
 
                         <h3>
                             Jusqu'au bout.
@@ -373,7 +444,6 @@
 
                     </article>
 
-
                 </div>
 
             </div>
@@ -381,10 +451,7 @@
         </section>
 
 
-
-        <!-- ============================= -->
-        <!-- EQUIPE -->
-        <!-- ============================= -->
+        <!-- ÉQUIPE -->
 
         <section class="team-section section" id="equipe">
 
@@ -399,9 +466,7 @@
                     à <span>agir.</span>
                 </h2>
 
-
                 <div class="team-grid">
-
 
                     <div class="team-member main-member">
 
@@ -428,7 +493,6 @@
                     </div>
 
 
-                    
                     <div class="team-member">
 
                         <div class="initial">
@@ -452,7 +516,6 @@
                         </div>
 
                     </div>
-
 
 
                     <div class="team-member">
@@ -479,7 +542,6 @@
 
                     </div>
 
-
                 </div>
 
             </div>
@@ -487,10 +549,7 @@
         </section>
 
 
-
-        <!-- ============================= -->
         <!-- ENGAGEMENTS -->
-        <!-- ============================= -->
 
         <section class="commitments section" id="engagements">
 
@@ -511,7 +570,6 @@
 
                     </div>
 
-
                     <p>
                         Le rôle d'un délégué est d'écouter
                         avant de parler.
@@ -520,64 +578,42 @@
                 </div>
 
 
-
                 <div class="commitment-list">
 
-
                     <div class="commitment">
-
                         <span>01</span>
-
                         <strong>
                             Être disponible et à l'écoute de la classe.
                         </strong>
-
                     </div>
 
-
                     <div class="commitment">
-
                         <span>02</span>
-
                         <strong>
                             Défendre les intérêts de tous.
                         </strong>
-
                     </div>
 
-
                     <div class="commitment">
-
                         <span>03</span>
-
                         <strong>
                             Faire le lien entre les élèves et l'équipe éducative.
                         </strong>
-
                     </div>
 
-
                     <div class="commitment">
-
                         <span>04</span>
-
                         <strong>
                             Proposer des idées et aller jusqu'au bout des projets.
                         </strong>
-
                     </div>
 
-
                     <div class="commitment">
-
                         <span>05</span>
-
                         <strong>
                             Ne laisser personne de côté.
                         </strong>
-
                     </div>
-
 
                 </div>
 
@@ -586,10 +622,7 @@
         </section>
 
 
-
-        <!-- ============================= -->
         <!-- COMPTEUR -->
-        <!-- ============================= -->
 
         <section class="vote-section">
 
@@ -601,22 +634,16 @@
                     ÉLECTIONS DES DÉLÉGUÉS
                 </div>
 
-
                 <h2>
-
                     Cette année, faisons<br>
-
                     les choses
                     <span>différemment.</span>
-
                 </h2>
-
 
                 <p class="vote-description">
                     Chaque clic représente une personne
                     qui soutient JFA.
                 </p>
-
 
                 <div class="counter">
 
@@ -631,7 +658,6 @@
 
                 </div>
 
-
                 <button class="big-vote-button" id="voteButton">
 
                     VOTE JFA
@@ -642,9 +668,7 @@
 
                 </button>
 
-
                 <p class="vote-message" id="voteMessage"></p>
-
 
                 <p class="vote-note">
                     Le compteur est actualisé pour tous les visiteurs.
@@ -655,10 +679,7 @@
         </section>
 
 
-
-        <!-- ============================= -->
-        <!-- FOOTER CTA -->
-        <!-- ============================= -->
+        <!-- FINAL -->
 
         <section class="final-section">
 
@@ -684,10 +705,9 @@
     </main>
 
 
-
-    <!-- ============================= -->
+    <!-- ================================================= -->
     <!-- FOOTER -->
-    <!-- ============================= -->
+    <!-- ================================================= -->
 
     <footer>
 
@@ -708,50 +728,61 @@
         </div>
 
 
-        <!-- ============================= -->
-<!-- ============================= -->
-<!-- BANDEAU SOUTIEN -->
-<!-- ============================= -->
+        <!-- BANDEAU SOUTIEN -->
 
-<div class="donation-wrapper">
+        <div class="donation-wrapper">
 
-    <div class="donation-banner">
+            <div class="donation-banner">
 
-        <div class="donation-main">
-            <div class="donation-icon">♥</div>
+                <div class="donation-main">
 
-            <div class="donation-content">
-                <strong>SOUTENEZ JFA</strong>
-                <span>Choisissez votre soutien</span>
+                    <div class="donation-icon">
+                        ♥
+                    </div>
+
+                    <div class="donation-content">
+
+                        <strong>
+                            SOUTENEZ JFA
+                        </strong>
+
+                        <span>
+                            Choisissez votre soutien
+                        </span>
+
+                    </div>
+
+                    <div class="donation-arrow">
+                        →
+                    </div>
+
+                </div>
+
+
+                <div class="donation-options">
+
+                    <button class="donation-option">
+                        2 €
+                    </button>
+
+                    <button class="donation-option">
+                        5 €
+                    </button>
+
+                    <button class="donation-option">
+                        10 €
+                    </button>
+
+                </div>
+
             </div>
 
-            <div class="donation-arrow">
-                →
-            </div>
         </div>
-
-
-        <div class="donation-options">
-
-            <button class="donation-option">
-                2 €
-            </button>
-
-            <button class="donation-option">
-                5 €
-            </button>
-
-            <button class="donation-option">
-                10 €
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
 
     </footer>
+
+</div>
+```
 
 </body>
 
