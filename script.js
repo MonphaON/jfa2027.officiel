@@ -44,29 +44,29 @@ AFFICHER / CACHER LE SITE
 
 function showSite() {
 
-```
+
 authScreen.style.display = "none";
 
 siteContent.style.display = "block";
-```
+
 
 }
 
 function showAuth() {
 
-```
+
 authScreen.style.display = "flex";
 
 siteContent.style.display = "none";
-```
+
 
 }
 
 function showAuthMessage(text) {
 
-```
+
 authMessage.textContent = text;
-```
+
 
 }
 
@@ -76,7 +76,7 @@ ENVOI DU CODE OTP
 
 sendOtpButton.addEventListener("click", async () => {
 
-```
+
 const email = emailInput.value.trim();
 
 if (!email) {
@@ -129,7 +129,7 @@ otpStep.style.display = "block";
 showAuthMessage(
     "Le code a été envoyé par e-mail 📩"
 );
-```
+
 
 });
 
@@ -139,7 +139,7 @@ VÉRIFICATION DU CODE
 
 verifyOtpButton.addEventListener("click", async () => {
 
-```
+
 const email = emailInput.value.trim();
 
 const token = otpInput.value.trim();
@@ -195,7 +195,7 @@ console.log(
 
 
 await checkProfile(data.user);
-```
+
 
 });
 
@@ -205,7 +205,7 @@ VÉRIFIER LE PROFIL
 
 async function checkProfile(user) {
 
-```
+
 const {
     data: profile,
     error
@@ -256,7 +256,7 @@ profileStep.style.display = "block";
 showAuthMessage(
     "Dernière étape : renseigne ton prénom et ta classe."
 );
-```
+
 
 }
 
@@ -266,7 +266,7 @@ ENREGISTRER LE PROFIL
 
 saveProfileButton.addEventListener("click", async () => {
 
-```
+
 const firstName =
     firstNameInput.value.trim();
 
@@ -342,7 +342,7 @@ if (error) {
 
 
 showSite();
-```
+
 
 });
 
@@ -352,7 +352,7 @@ SESSION EXISTANTE
 
 async function checkExistingSession() {
 
-```
+
 const {
     data: {
         session
@@ -375,7 +375,7 @@ console.log(
 
 
 await checkProfile(session.user);
-```
+
 
 }
 
@@ -393,7 +393,7 @@ document.getElementById("mobileNavigation");
 
 if (mobileMenu) {
 
-```
+
 mobileMenu.addEventListener(
     "click",
     () => {
@@ -404,13 +404,13 @@ mobileMenu.addEventListener(
 
     }
 );
-```
+
 
 }
 
 if (mobileNavigation) {
 
-```
+
 mobileNavigation
     .querySelectorAll("a")
     .forEach(link => {
@@ -427,7 +427,7 @@ mobileNavigation
         );
 
     });
-```
+
 
 }
 
@@ -449,19 +449,19 @@ localStorage.getItem("jfa_cookie_choice");
 
 if (!cookieChoice) {
 
-```
+
 setTimeout(() => {
 
     cookieBanner.classList.add("active");
 
 }, 800);
-```
+
 
 }
 
 if (cookieAccept) {
 
-```
+
 cookieAccept.addEventListener(
     "click",
     () => {
@@ -477,13 +477,13 @@ cookieAccept.addEventListener(
 
     }
 );
-```
+
 
 }
 
 if (cookieRefuse) {
 
-```
+
 cookieRefuse.addEventListener(
     "click",
     () => {
@@ -499,7 +499,7 @@ cookieRefuse.addEventListener(
 
     }
 );
-```
+
 
 }
 
@@ -510,7 +510,7 @@ COMPTEUR DE VOTE
 /*
 IMPORTANT :
 
-```
+
 Cette partie est volontairement simple.
 Elle utilise le compteur déjà présent
 sur ton site.
@@ -518,7 +518,7 @@ sur ton site.
 Si tu veux que le compteur soit réellement
 commun à tous les visiteurs, il faudra ensuite
 le connecter à une table Supabase dédiée.
-```
+
 
 */
 
@@ -533,31 +533,31 @@ document.getElementById("voteMessage");
 
 function handleVoteClick() {
 
-```
+
 if (voteMessage) {
 
     voteMessage.textContent =
         "Merci pour ton soutien à JFA ❤️";
 
 }
-```
+
 
 }
 
 if (voteButton) {
 
-```
+
 voteButton.addEventListener(
     "click",
     handleVoteClick
 );
-```
+
 
 }
 
 if (voteButtonNav) {
 
-```
+
 voteButtonNav.addEventListener(
     "click",
     () => {
@@ -577,6 +577,6 @@ voteButtonNav.addEventListener(
 
     }
 );
-```
+
 
 }
