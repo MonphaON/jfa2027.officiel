@@ -763,6 +763,14 @@
                 FORCE & ACTION
             </span>
 
+            <button
+        class="contact-team-button"
+        id="openContactButton"
+        type="button"
+    >
+        CONTACTER L'ÉQUIPE →
+    </button>
+            
         </div>
 
 
@@ -840,6 +848,135 @@
 
         </div>
 
+        <!-- ================================================= -->
+<!-- FORMULAIRE CONTACT -->
+<!-- ================================================= -->
+
+<div
+    class="contact-modal"
+    id="contactModal"
+    aria-hidden="true"
+>
+
+    <div class="contact-modal-overlay" id="contactOverlay"></div>
+
+    <div class="contact-box">
+
+        <button
+            type="button"
+            class="contact-close"
+            id="closeContactButton"
+            aria-label="Fermer"
+        >
+            ×
+        </button>
+
+        <div class="red-label">
+            CONTACT JFA
+        </div>
+
+        <h2>
+            Écrivez à
+            <span>notre équipe.</span>
+        </h2>
+
+        <p class="contact-description">
+            Une question, une idée ou une proposition ?
+            Envoyez-nous directement un message.
+        </p>
+
+        <form id="contactForm">
+
+            <div class="contact-field">
+
+                <label for="contactName">
+                    PRÉNOM
+                </label>
+
+                <input
+                    type="text"
+                    id="contactName"
+                    name="name"
+                    placeholder="Ton prénom"
+                    required
+                    maxlength="80"
+                >
+
+            </div>
+
+
+            <div class="contact-field">
+
+                <label for="contactEmail">
+                    E-MAIL
+                </label>
+
+                <input
+                    type="email"
+                    id="contactEmail"
+                    name="email"
+                    placeholder="ton@email.com"
+                    required
+                    maxlength="150"
+                >
+
+            </div>
+
+
+            <div class="contact-field">
+
+                <label for="contactSubject">
+                    SUJET
+                </label>
+
+                <input
+                    type="text"
+                    id="contactSubject"
+                    name="subject"
+                    placeholder="Le sujet de ton message"
+                    required
+                    maxlength="150"
+                >
+
+            </div>
+
+
+            <div class="contact-field">
+
+                <label for="contactMessage">
+                    MESSAGE
+                </label>
+
+                <textarea
+                    id="contactMessage"
+                    name="message"
+                    placeholder="Écris ton message ici..."
+                    required
+                    maxlength="2000"
+                    rows="6"
+                ></textarea>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="contact-submit"
+                id="contactSubmit"
+            >
+                ENVOYER LE MESSAGE →
+            </button>
+
+            <p
+                class="contact-status"
+                id="contactStatus"
+            ></p>
+
+        </form>
+
+    </div>
+
+</div>
     </footer>
 
 </div>
