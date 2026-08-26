@@ -1006,3 +1006,212 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 });
+
+/* =====================================================
+   CONTACT JFA — ENVOI DU FORMULAIRE
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const contactForm =
+        document.getElementById("contactForm");
+
+    const contactSubmit =
+        document.getElementById("contactSubmit");
+
+    const contactStatus =
+        document.getElementById("contactStatus");
+
+
+    if (!contactForm) {
+        return;
+    }
+
+
+    contactForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const name =
+                document
+                    .getElementById("contactName")
+                    .value
+                    .trim();
+
+            const email =
+                document
+                    .getElementById("contactEmail")
+                    .value
+                    .trim();
+
+            const subject =
+                document
+                    .getElementById("contactSubject")
+                    .value
+                    .trim();
+
+            const message =
+                document
+                    .getElementById("contactMessage")
+                    .value
+                    .trim();
+
+
+            if (!name || !email || !subject || !message) {
+
+                contactStatus.textContent =
+                    "Merci de remplir tous les champs.";
+
+                contactStatus.className =
+                    "contact-status error";
+
+                return;
+            }
+
+
+            contactSubmit.disabled = true;
+
+            contactSubmit.textContent =
+                "ENVOI EN COURS...";
+
+            contactStatus.textContent =
+                "Envoi de votre message...";
+
+            contactStatus.className =
+                "contact-status";
+
+
+            try {
+
+                /* =========================================
+                   RÉCUPÉRER LA SESSION SUPABASE
+                ========================================= */
+
+                const {
+                    data: { session },
+                    error: sessionError
+                } =
+                    await supabaseClient.auth.getSession();
+
+
+                if (sessionError) {
+
+                    throw new Error(
+                        "Impossible de vérifier votre connexion."
+                    );
+
+                }
+
+
+                if (!session) {
+
+                    throw new Error(
+                        "Vous devez être connecté pour contacter l'équipe."
+                    );
+
+                }
+
+
+                /* =========================================
+                   ENVOYER LE MESSAGE À SUPABASE
+                ========================================= */
+
+                const response =
+                    await fetch(
+                        `${SUPABASE_URL}/functions/v1/contact-team`,
+                        {
+
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                "Authorization":
+                                    `Bearer ${session.access_token}`,
+
+                                "apikey":
+                                    SUPABASE_ANON_KEY
+
+                            },
+
+                            body: JSON.stringify({
+
+                                name: name,
+
+                                email: email,
+
+                                subject: subject,
+
+                                message: message
+
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                /* =========================================
+                   VÉRIFIER LA RÉPONSE
+                ========================================= */
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        "Impossible d'envoyer le message."
+                    );
+
+                }
+
+
+                /* =========================================
+                   SUCCÈS
+                ========================================= */
+
+                contactStatus.textContent =
+                    "✓ Votre message a bien été envoyé à l'équipe JFA !";
+
+                contactStatus.className =
+                    "contact-status success";
+
+
+                contactForm.reset();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Erreur contact :",
+                    error
+                );
+
+
+                contactStatus.textContent =
+                    "✕ " + error.message;
+
+                contactStatus.className =
+                    "contact-status error";
+
+
+            } finally {
+
+                contactSubmit.disabled = false;
+
+                contactSubmit.textContent =
+                    "ENVOYER LE MESSAGE →";
+
+            }
+
+        }
+    );
+
+});
