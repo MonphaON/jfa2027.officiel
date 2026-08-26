@@ -911,3 +911,98 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+
+/* =====================================================
+   CONTACT JFA — OUVRIR / FERMER
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const openContactButton =
+        document.getElementById("openContactButton");
+
+    const closeContactButton =
+        document.getElementById("closeContactButton");
+
+    const contactModal =
+        document.getElementById("contactModal");
+
+    const contactOverlay =
+        document.getElementById("contactOverlay");
+
+
+    function openContact() {
+
+        contactModal.classList.add("active");
+
+        contactModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+        document.body.style.overflow = "hidden";
+
+    }
+
+
+    function closeContact() {
+
+        contactModal.classList.remove("active");
+
+        contactModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        document.body.style.overflow = "";
+
+    }
+
+
+    if (openContactButton) {
+
+        openContactButton.addEventListener(
+            "click",
+            openContact
+        );
+
+    }
+
+
+    if (closeContactButton) {
+
+        closeContactButton.addEventListener(
+            "click",
+            closeContact
+        );
+
+    }
+
+
+    if (contactOverlay) {
+
+        contactOverlay.addEventListener(
+            "click",
+            closeContact
+        );
+
+    }
+
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                contactModal.classList.contains("active")
+            ) {
+
+                closeContact();
+
+            }
+
+        }
+    );
+
+});
