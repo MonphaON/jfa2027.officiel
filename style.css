@@ -1831,3 +1831,110 @@ VIDÉO DE CAMPAGNE
     height: 100%;
     border: none;
 }
+
+/* =====================================================
+NOTIFICATION DON
+===================================================== */
+
+.donation-toast {
+    position: fixed;
+
+    right: 25px;
+    bottom: 25px;
+
+    z-index: 20000;
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    min-width: 320px;
+
+    padding: 16px 20px;
+
+    background: #16a34a;
+
+    color: white;
+
+    border-radius: 6px;
+
+    box-shadow: 0 15px 40px rgba(0, 0, 0, .25);
+
+    transform: translateX(130%);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        transform .4s ease,
+        opacity .4s ease;
+}
+
+.donation-toast.active {
+    transform: translateX(0);
+
+    opacity: 1;
+}
+
+.donation-toast-icon {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: white;
+
+    color: #16a34a;
+
+    border-radius: 50%;
+
+    font-size: 20px;
+
+    font-weight: 900;
+}
+
+.donation-toast-content {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.donation-toast-content strong {
+    font-size: 13px;
+
+    font-weight: 900;
+}
+
+.donation-toast-content span {
+    font-size: 11px;
+
+    opacity: .95;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .donation-toast {
+
+        left: 15px;
+        right: 15px;
+
+        bottom: 15px;
+
+        min-width: 0;
+
+        width: auto;
+
+    }
+
+}
