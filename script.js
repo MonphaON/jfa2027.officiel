@@ -659,3 +659,180 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 60000);
 
 });
+
+/* =====================================================
+DONATIONS JFA
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const donationButtons =
+        document.querySelectorAll(".donation-option");
+
+    const donationToast =
+        document.getElementById("donationToast");
+
+    const donationToastMessage =
+        document.getElementById("donationToastMessage");
+
+
+    /* =====================================================
+    AFFICHER LA NOTIFICATION
+    ===================================================== */
+
+    function showDonationToast(message) {
+
+        if (!donationToast) return;
+
+        donationToastMessage.textContent = message;
+
+        donationToast.classList.add("active");
+
+        setTimeout(() => {
+
+            donationToast.classList.remove("active");
+
+        }, 5000);
+
+    }
+
+
+    /* =====================================================
+    CLIC SUR UN DON
+    ===================================================== */
+
+    donationButtons.forEach(button => {
+
+        button.addEventListener("click", async function () {
+
+            const amount =
+                Number(this.dataset.amount);
+
+
+            if (![2, 5, 10].includes(amount)) {
+
+                console.error(
+                    "Montant de don invalide."
+                );
+
+                return;
+
+            }
+
+
+            /* -----------------------------------------
+            VÉRIFIER LA SESSION
+            ----------------------------------------- */
+
+            const {
+                data: {
+                    session
+                }
+            } = await supabaseClient.auth.getSession();
+
+
+            if (!session) {
+
+                alert(
+                    "Tu dois être connecté pour faire un don."
+                );
+
+                return;
+
+            }
+
+
+            /* -----------------------------------------
+            EMPÊCHER LES DOUBLE-CLICS
+            ----------------------------------------- */
+
+            donationButtons.forEach(btn => {
+
+                btn.disabled = true;
+
+            });
+
+
+            this.textContent = "CHARGEMENT...";
+
+
+            try {
+
+                /* -----------------------------------------
+                CRÉER LA SESSION STRIPE
+                ----------------------------------------- */
+
+                const {
+                    data,
+                    error
+                } = await supabaseClient.functions.invoke(
+                    "create-checkout",
+                    {
+
+                        body: {
+
+                            amount: amount
+
+                        }
+
+                    }
+                );
+
+
+                if (error) {
+
+                    console.error(error);
+
+                    throw new Error(
+                        "Impossible de créer le paiement."
+                    );
+
+                }
+
+
+                if (!data || !data.url) {
+
+                    throw new Error(
+                        "Stripe n'a pas fourni de lien de paiement."
+                    );
+
+                }
+
+
+                /* -----------------------------------------
+                REDIRECTION VERS STRIPE
+                ----------------------------------------- */
+
+                window.location.href = data.url;
+
+
+            } catch (error) {
+
+                console.error(
+                    "Erreur donation :",
+                    error
+                );
+
+
+                showDonationToast(
+                    "Une erreur est survenue. Aucun don n'a été effectué."
+                );
+
+
+                donationButtons.forEach(btn => {
+
+                    btn.disabled = false;
+
+                });
+
+
+                this.textContent =
+                    amount + " €";
+
+            }
+
+        });
+
+    });
+
+});
