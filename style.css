@@ -1938,3 +1938,41 @@ NOTIFICATION DON
     }
 
 }
+
+/* =====================================================
+   CONTACT — FOOTER
+===================================================== */
+
+.contact-team-button {
+
+    border: 1px solid rgba(255,255,255,.25);
+
+    background: transparent;
+
+    color: white;
+
+    padding: 11px 16px;
+
+    font-family: inherit;
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition: .25s ease;
+
+}
+
+.contact-team-button:hover {
+
+    background: var(--red);
+
+    border-color: var(--red);
+
+    transform: translateY(-2px);
+
+}
