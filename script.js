@@ -661,7 +661,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 /* =====================================================
-DONATIONS JFA
+DONATIONS JFA — STRIPE
 ===================================================== */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -676,30 +676,23 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("donationToastMessage");
 
 
-    /* =====================================================
-    AFFICHER LA NOTIFICATION
-    ===================================================== */
-
     function showDonationToast(message) {
 
-        if (!donationToast) return;
+        if (!donationToast || !donationToastMessage) {
+            alert(message);
+            return;
+        }
 
         donationToastMessage.textContent = message;
 
         donationToast.classList.add("active");
 
         setTimeout(() => {
-
             donationToast.classList.remove("active");
-
         }, 5000);
 
     }
 
-
-    /* =====================================================
-    CLIC SUR UN DON
-    ===================================================== */
 
     donationButtons.forEach(button => {
 
@@ -708,126 +701,208 @@ document.addEventListener("DOMContentLoaded", function () {
             const amount =
                 Number(this.dataset.amount);
 
+            console.log("💰 Don sélectionné :", amount);
 
             if (![2, 5, 10].includes(amount)) {
 
                 console.error(
-                    "Montant de don invalide."
+                    "Montant invalide :",
+                    amount
                 );
 
                 return;
-
             }
 
 
-            /* -----------------------------------------
+            /* =========================================
             VÉRIFIER LA SESSION
-            ----------------------------------------- */
+            ========================================= */
 
             const {
                 data: {
                     session
-                }
+                },
+                error: sessionError
             } = await supabaseClient.auth.getSession();
+
+
+            console.log(
+                "🔐 Session :",
+                session
+            );
+
+
+            if (sessionError) {
+
+                console.error(
+                    "Erreur session :",
+                    sessionError
+                );
+
+                showDonationToast(
+                    "Erreur de connexion à Supabase."
+                );
+
+                return;
+            }
 
 
             if (!session) {
 
-                alert(
+                showDonationToast(
                     "Tu dois être connecté pour faire un don."
                 );
 
                 return;
-
             }
 
 
-            /* -----------------------------------------
-            EMPÊCHER LES DOUBLE-CLICS
-            ----------------------------------------- */
+            /* =========================================
+            DÉSACTIVER LES BOUTONS
+            ========================================= */
 
             donationButtons.forEach(btn => {
-
                 btn.disabled = true;
-
             });
 
+            const originalText =
+                this.textContent;
 
-            this.textContent = "CHARGEMENT...";
+            this.textContent =
+                "CHARGEMENT...";
 
 
             try {
 
-                /* -----------------------------------------
-                CRÉER LA SESSION STRIPE
-                ----------------------------------------- */
-
-                const {
-                    data,
-                    error
-                } = await supabaseClient.functions.invoke(
-                    "create-checkout",
-                    {
-
-                        body: {
-
-                            amount: amount
-
-                        }
-
-                    }
+                console.log(
+                    "📡 Appel de create-checkout..."
                 );
 
 
-                if (error) {
+                /* =========================================
+                APPEL EDGE FUNCTION
+                ========================================= */
 
-                    console.error(error);
+                const response =
+                    await fetch(
+                        `${SUPABASE_URL}/functions/v1/create-checkout`,
+                        {
+                            method: "POST",
 
-                    throw new Error(
-                        "Impossible de créer le paiement."
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                "Authorization":
+                                    `Bearer ${session.access_token}`,
+
+                                "apikey":
+                                    SUPABASE_ANON_KEY
+
+                            },
+
+                            body: JSON.stringify({
+                                amount: amount
+                            })
+                        }
+                    );
+
+
+                console.log(
+                    "📡 Status HTTP :",
+                    response.status
+                );
+
+
+                const text =
+                    await response.text();
+
+
+                console.log(
+                    "📦 Réponse brute :",
+                    text
+                );
+
+
+                let data = {};
+
+                try {
+
+                    data =
+                        JSON.parse(text);
+
+                } catch {
+
+                    console.error(
+                        "La réponse n'est pas du JSON."
                     );
 
                 }
 
 
-                if (!data || !data.url) {
+                /* =========================================
+                ERREUR SERVEUR
+                ========================================= */
+
+                if (!response.ok) {
 
                     throw new Error(
-                        "Stripe n'a pas fourni de lien de paiement."
+                        data.error ||
+                        `Erreur HTTP ${response.status}`
                     );
 
                 }
 
 
-                /* -----------------------------------------
-                REDIRECTION VERS STRIPE
-                ----------------------------------------- */
+                /* =========================================
+                VÉRIFIER L'URL STRIPE
+                ========================================= */
 
-                window.location.href = data.url;
+                if (!data.url) {
+
+                    throw new Error(
+                        "Stripe n'a fourni aucune URL."
+                    );
+
+                }
+
+
+                console.log(
+                    "✅ URL Stripe reçue :",
+                    data.url
+                );
+
+
+                /* =========================================
+                REDIRECTION
+                ========================================= */
+
+                window.location.href =
+                    data.url;
 
 
             } catch (error) {
 
                 console.error(
-                    "Erreur donation :",
+                    "❌ ERREUR DON :",
                     error
                 );
 
 
                 showDonationToast(
-                    "Une erreur est survenue. Aucun don n'a été effectué."
+                    "Erreur : " +
+                    error.message
                 );
 
 
                 donationButtons.forEach(btn => {
-
                     btn.disabled = false;
-
                 });
 
 
                 this.textContent =
-                    amount + " €";
+                    originalText;
 
             }
 
