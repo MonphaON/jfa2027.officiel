@@ -554,7 +554,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 difference / 86400000
             );
 
-        return VOTES_DE_DEPART + (Math.max(0, days) * 2);
+        return VOTES_DE_DEPART + (Math.max(0, days) * 11);
     }
 
 
